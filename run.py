@@ -56,6 +56,10 @@ def execute_config ():
             command = "systemctl start {}".format(service_name)
             keydata[service_name]['log'] = subprocess.getoutput(command)
             keydata[service_name]['command'] = ""
+        elif command == 'restart':
+            command = "systemctl restart {}".format(service_name)
+            keydata[service_name]['log'] = subprocess.getoutput(command)
+            keydata[service_name]['command'] = ""
         elif command == 'stop':
             command = "systemctl stop {}".format(service_name)
             keydata[service_name]['log'] = subprocess.getoutput(command)

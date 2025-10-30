@@ -1,1 +1,1 @@
-{"httpd": {"status": "running", "command": "", "log": ""}, "tor": {"status": "running", "command": "", "log": ""}}
+{"httpd": {"status": "running", "command": "", "log": ""}, "tor": {"status": "stopped", "command": "", "log": ""}}
