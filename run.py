@@ -1,19 +1,63 @@
 import json, os, sys, signal, time, subprocess
 from pathlib import Path
+import datetime
+from time import gmtime, strftime
 
 class GLOBAL:
     halt = False
-    services = ''
-
-if len(sys.argv) < 2:
-    print ("Usage: run.py <services.json>")
-    exit(1)
-else:
-    GLOBAL.services = sys.argv[1]
+    services = '/home/privateness/services.json'
+    commands = '/home/privateness/commands.json'
 
 if not os.path.exists(GLOBAL.services):
-    print ("Services file '{}' does not exist".format(GLOBAL.services))
-    exit(2)
+    with open(GLOBAL.services, 'w+') as file:
+        data = {
+            "mysql": { "status": "running", "command": "", "icon": "fas fa-user-shield", "style": "background: linear-gradient(135deg, var(--primary), #4895ef);", "log": "" },
+            "tor": { "status": "running", "command": "", "icon": "fas fa-search", "style": "background: linear-gradient(135deg, var(--secondary), #3a0ca3);","log": "" },
+            "cups": { "status": "running", "command": "", "icon": "fab fa-bitcoin", "style": "background: linear-gradient(135deg, #7209b7, #560bad);","log": "" },
+            "ufw": { "status": "running", "command": "", "icon": "fas fa-network-wired", "style": "background: linear-gradient(135deg, #4cc9f0, var(--primary));","log": "" },
+            "AmneziaVPN": { "status": "running", "command": "", "icon": "fas fa-file-upload", "style": "background: linear-gradient(135deg, var(--accent), #b5179e);","log": "" }
+        }
+
+        file.write(json.dumps(data))
+        file.close()
+
+    Path(GLOBAL.services).chmod(0o666)
+
+if not os.path.exists(GLOBAL.commands):
+    with open(GLOBAL.commands, 'w+') as file:
+
+        data = {
+            "sysupgrade": {
+                "param": "",
+                "status": "iddle", 
+                "date": "", 
+                "log": ""
+            },
+            "cert": {
+                "param": "", 
+                "status": "iddle", 
+                "date": "", 
+                "log": ""
+            },
+            "userpass": {
+                "param": "", 
+                "status": "iddle", 
+                "date": "", 
+                "log": ""
+            },
+            "rootpass": {
+                "param": "", 
+                "status": "iddle", 
+                "date": "", 
+                "log": ""
+            }
+        }
+
+        file.write(json.dumps(data))
+        file.close()
+
+    Path(GLOBAL.commands).chmod(0o666)
+    
 
 def exit_fn (*args):
     GLOBAL.halt = True
@@ -69,12 +113,57 @@ def execute_config ():
         file.write(json.dumps(keydata))
         file.close()
 
+def run_commands ():
+    def read_commands ():
+        with open(GLOBAL.commands, 'r') as file:
+            commands = json.loads(file.read())
+            file.close()
+            return commands
+
+    def write_commands (commands):
+        with open(GLOBAL.commands, 'w') as file:
+            file.write(json.dumps(commands))
+            file.close()
+
+    commands = read_commands ()
+
+    run = False
+        
+    for command in commands:
+        if commands[command]['status'] == 'launch':
+            commands[command]['status'] = 'running'
+
+            if command == 'sysupgrade':
+                run = 'apt update && apt -y upgrade'
+            elif command == 'cert':
+                run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj \"/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID\" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
+            elif command == 'userpass':
+                run = 'usermod --password privateness "{}"'.format(commands[command]['param'])
+            elif command == 'rootpass':
+                run = 'usermod --password root "{}"'.format(commands[command]['param'])
+
+            run = 'exa -lh --icons --git --tree /usr'
+
+            if run != False:
+                # commands[command]['log'] = 
+                subprocess.getoutput(run)
+                commands[command]['date'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                commands[command]['status'] = 'done'
+            else:
+                commands[command]['status'] = 'iddle'
+
+            commands[command]['param'] = ''
+
+            write_commands (commands)
+            break
 
 while True:
     if GLOBAL.halt:
-        break
+        print ("\nexit")
+        exit (0)
 
+    execute_config()
     update_config()
     time.sleep(1)
-    execute_config()
+    run_commands()
     time.sleep(1)
