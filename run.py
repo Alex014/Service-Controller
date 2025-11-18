@@ -134,25 +134,27 @@ def run_commands ():
             commands[command]['status'] = 'running'
 
             if command == 'sysupgrade':
-                run = 'apt update && apt -y upgrade'
+                # run = 'apt update && apt -y upgrade'
+                run = 'exa -lh --icons --git --tree /usr'
             elif command == 'cert':
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj \"/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID\" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
+                # run = 'exa -lh --icons --git --tree /usr'
             elif command == 'userpass':
-                run = 'usermod --password privateness "{}"'.format(commands[command]['param'])
+                run = 'usermod --password privateness "{}"'.format(commands[command]['param']) + " && "  + \
+                    "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
+                # run = "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
             elif command == 'rootpass':
                 run = 'usermod --password root "{}"'.format(commands[command]['param'])
-
-            run = 'exa -lh --icons --git --tree /usr'
+                # run = 'exa -lh --icons --git --tree /usr'
 
             if run != False:
-                # commands[command]['log'] = 
-                subprocess.getoutput(run)
+                commands[command]['log'] = subprocess.getoutput(run)
                 commands[command]['date'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
                 commands[command]['status'] = 'done'
             else:
                 commands[command]['status'] = 'iddle'
 
-            commands[command]['param'] = ''
+            # commands[command]['param'] = ''
 
             write_commands (commands)
             break
@@ -167,3 +169,10 @@ while True:
     time.sleep(1)
     run_commands()
     time.sleep(1)
+
+#AuthType Basic   
+#AuthName "Privateness password (default privateness)" 
+#AuthUserFile  .htpasswd
+#require valid-user    
+
+# echo 'AuthType Basic' > .htaccess && echo 'AuthName "Privateness password (default privateness)" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness privateness
