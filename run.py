@@ -27,6 +27,12 @@ if not os.path.exists(GLOBAL.commands):
     with open(GLOBAL.commands, 'w+') as file:
 
         data = {
+            "source": {
+                "param": "", 
+                "status": "iddle", 
+                "date": "", 
+                "log": ""
+            },
             "sysupgrade": {
                 "param": "",
                 "status": "iddle", 
@@ -134,18 +140,21 @@ def run_commands ():
             commands[command]['status'] = 'running'
 
             if command == 'sysupgrade':
-                # run = 'apt update && apt -y upgrade'
-                run = 'exa -lh --icons --git --tree /usr'
+                run = 'apt update && apt -y upgrade'
+                # run = 'ls -lh /home/privateness'
             elif command == 'cert':
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj \"/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID\" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
-                # run = 'exa -lh --icons --git --tree /usr'
+                # run = 'ls -lh /home/privateness'
             elif command == 'userpass':
                 run = 'usermod --password privateness "{}"'.format(commands[command]['param']) + " && "  + \
                     "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
                 # run = "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
             elif command == 'rootpass':
                 run = 'usermod --password root "{}"'.format(commands[command]['param'])
-                # run = 'exa -lh --icons --git --tree /usr'
+                # run = 'ls -lh /home/privateness'
+            elif command == 'source':
+                run = 'cd /var/www && git pull origin master'
+                # run = 'ls -lh /home/privateness'
 
             if run != False:
                 commands[command]['log'] = subprocess.getoutput(run)
