@@ -22,7 +22,7 @@ if not os.path.exists(GLOBAL.services):
             "explorer": { "status": "running", "command": "", "icon": "fas fa-search", "style": "background: linear-gradient(135deg, var(--secondary), #3a0ca3);","log": "" },
             "emercoin": { "status": "running", "command": "", "icon": "fab fa-bitcoin", "style": "background: linear-gradient(135deg, #7209b7, #560bad);","log": "" },
             "ipfs": { "status": "running", "command": "", "icon": "fas fa-network-wired", "style": "background: linear-gradient(135deg, #4cc9f0, var(--primary));","log": "" },
-            "wsftp": { "status": "running", "command": "", "icon": "fas fa-file-upload", "style": "background: linear-gradient(135deg, var(--accent), #b5179e);","log": "" }
+            "vsftpd": { "status": "running", "command": "", "icon": "fas fa-file-upload", "style": "background: linear-gradient(135deg, var(--accent), #b5179e);","log": "" }
         }
 
         file.write(json.dumps(data))
