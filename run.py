@@ -153,11 +153,11 @@ def run_commands ():
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj \"/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID\" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
                 # run = 'ls -lh /home/privateness'
             elif command == 'userpass':
-                run = 'usermod --password "{}" privateness'.format(commands[command]['param']) + " && "  + \
+                run = 'PASS=$(echo "{}" | mkpasswd -s) && '.format(commands[command]['param']) + 'usermod --password "${PASS}" privateness' + " && "  + \
                     "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
                 # run = "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
             elif command == 'rootpass':
-                run = 'usermod --password "{}" root'.format(commands[command]['param'])
+                run = 'PASS=$(echo "{}" | mkpasswd -s) && '.format(commands[command]['param']) + 'usermod --password "${PASS}" root'
                 # run = 'ls -lh /home/privateness'
             elif command == 'source':
                 run = 'cd /var/www && git pull origin master'
