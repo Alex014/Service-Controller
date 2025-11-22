@@ -173,7 +173,6 @@ def run_commands ():
             # commands[command]['param'] = ''
 
     write_commands (commands)
-    break
 
 while True:
     if GLOBAL.halt:
