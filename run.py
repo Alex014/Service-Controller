@@ -153,7 +153,7 @@ def run_commands ():
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj \"/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID\" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
                 # run = 'ls -lh /home/privateness'
             elif command == 'userpass':
-                run = 'usermod --password privateness "{}"'.format(commands[command]['param']) + " && "  + \
+                run = 'usermod --password "{}" privateness'.format(commands[command]['param']) + " && "  + \
                     "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
                 # run = "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
             elif command == 'rootpass':
@@ -172,8 +172,8 @@ def run_commands ():
 
             # commands[command]['param'] = ''
 
-            write_commands (commands)
-            break
+    write_commands (commands)
+    break
 
 while True:
     if GLOBAL.halt:
