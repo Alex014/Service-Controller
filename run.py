@@ -157,7 +157,7 @@ def run_commands ():
                     "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
                 # run = "echo 'AuthType Basic' > .htaccess && echo 'AuthName \"Privateness password (default privateness)\" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness {}".format(commands[command]['param'])
             elif command == 'rootpass':
-                run = 'usermod --password root "{}"'.format(commands[command]['param'])
+                run = 'usermod --password "{}" root'.format(commands[command]['param'])
                 # run = 'ls -lh /home/privateness'
             elif command == 'source':
                 run = 'cd /var/www && git pull origin master'
