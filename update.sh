@@ -5,6 +5,7 @@ while :
 do
     if [ -f $FILE ]; then
         cd /home/privateness/Service-Controller && \
+        cp update.sh ~/update.sh && \
         git pull origin master && \
         rm $FILE && \
         systemctl start controller
