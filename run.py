@@ -192,11 +192,6 @@ def run_commands ():
     write_commands (commands)
 
 while True:
-    if is_self_upgrade():
-        print ("\nUpgrading right now !")
-        print ("\nexit")
-        exit (1)
-
     if GLOBAL.halt:
         print ("\nexit")
         exit (0)
@@ -205,4 +200,10 @@ while True:
     update_config()
     time.sleep(1)
     run_commands()
+
+    if is_self_upgrade():
+        print ("\nUpgrading right now !")
+        print ("\nexit")
+        exit (1)
+        
     time.sleep(1)
