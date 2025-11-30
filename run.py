@@ -206,10 +206,3 @@ while True:
     time.sleep(1)
     run_commands()
     time.sleep(1)
-
-#AuthType Basic   
-#AuthName "Privateness password (default privateness)" 
-#AuthUserFile  .htpasswd
-#require valid-user    
-
-# echo 'AuthType Basic' > .htaccess && echo 'AuthName "Privateness password (default privateness)" ' >> .htaccess && echo 'AuthUserFile /home/privateness/.htpasswd ' >> .htaccess && echo 'require valid-user' >> .htaccess && htpasswd -cb /home/privateness/.htpasswd privateness privateness
