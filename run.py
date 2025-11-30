@@ -7,6 +7,7 @@ class GLOBAL:
     halt = False
     services = '/home/privateness/services.json'
     commands = '/home/privateness/commands.json'
+    self_update_file = '/home/privateness/.update'
 
 if not os.path.exists(GLOBAL.services):
     with open(GLOBAL.services, 'w+') as file:
@@ -74,6 +75,15 @@ if not os.path.exists(GLOBAL.commands):
 
 def exit_fn (*args):
     GLOBAL.halt = True
+
+def is_self_upgrade ():
+    return os.path.exists(GLOBAL.self_update_file)
+
+def begin_self_upgrade ():
+    return subprocess.run('touch "{}"'.format(GLOBAL.self_update_file))
+
+def end_self_upgrade ():
+    return os.remove(GLOBAL.self_update_file)
 
 signal.signal(signal.SIGINT, exit_fn)
 signal.signal(signal.SIGTERM, exit_fn)
@@ -148,7 +158,10 @@ def run_commands ():
 
             if command == 'sysupgrade':
                 run = 'apt update && apt -y upgrade'
-                # run = 'ls -lh /home/privateness'
+                begin_self_upgrade ()
+
+                print ("\nWait for Service Controller upgrade ...")
+                exit (0)
             elif command == 'cert':
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj \"/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID\" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
                 # run = 'ls -lh /home/privateness'
@@ -162,6 +175,10 @@ def run_commands ():
             elif command == 'source':
                 run = 'cd /var/www && git pull origin master'
                 # run = 'ls -lh /home/privateness'
+            elif command == 'backup':
+                run = 'dt=$(date +"%Y-%m-%d %T") && tar czf "/home/privateness/Backup/${dt}-backup.tar.gz" /home/privateness/.privateness/wallets /home/privateness/.emercoin/wallets'
+            elif command == 'restore':
+                run = 'tar xzf "/home/privateness/Backup/{}" -C /'.format(commands[command]['param'])
 
             if run != False:
                 commands[command]['log'] = subprocess.getoutput(run)
@@ -175,6 +192,11 @@ def run_commands ():
     write_commands (commands)
 
 while True:
+    if is_self_upgrade():
+        print ("\nUpgrading right now !")
+        print ("\nexit")
+        exit (1)
+
     if GLOBAL.halt:
         print ("\nexit")
         exit (0)
