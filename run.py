@@ -93,7 +93,8 @@ def is_self_upgrade():
 
 
 def begin_self_upgrade():
-    return subprocess.run('touch "{}"'.format(GLOBAL.self_update_file))
+    return open(GLOBAL.self_update_file, 'a').close()
+    # return subprocess.run('touch "{}"'.format(GLOBAL.self_update_file))
 
 
 def end_self_upgrade():
