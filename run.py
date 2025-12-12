@@ -210,7 +210,6 @@ def run_commands():
 
             if command == "sysupgrade":
                 run = "apt update && apt -y upgrade"
-                begin_self_upgrade()
 
                 print("\nWait for Service Controller upgrade ...")
                 exit(0)
@@ -262,6 +261,9 @@ def run_commands():
             # commands[command]['param'] = ''
 
     write_commands(commands)
+
+    if command == "sysupgrade":
+        begin_self_upgrade()
 
 
 while True:
