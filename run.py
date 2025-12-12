@@ -203,6 +203,7 @@ def run_commands():
     commands = read_commands()
 
     run = False
+    upgrade = False
 
     for command in commands:
         if commands[command]["status"] == "launch":
@@ -210,6 +211,7 @@ def run_commands():
 
             if command == "sysupgrade":
                 run = "apt update && apt -y upgrade"
+                upgrade = True
             elif command == "cert":
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj "/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
                 # run = 'ls -lh /home/privateness'
@@ -248,7 +250,7 @@ def run_commands():
                 commands[command]["log"] = subprocess.getoutput(run)
                 commands[command]["date"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
                 commands[command]["status"] = "done"
-                commands[command]["status"] = "iddle"
+                # commands[command]["status"] = "iddle"
                 
             if command == 'backup': 
                 commands['backup']['last'] = get_last_backup()
@@ -259,7 +261,7 @@ def run_commands():
 
     write_commands(commands)
 
-    if command == "sysupgrade":
+    if upgrade:
         print("\nWait for Service Controller upgrade ...")
         begin_self_upgrade()
         exit(0)
