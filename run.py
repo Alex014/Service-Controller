@@ -244,8 +244,9 @@ def run_commands():
                 arc = get_last_restore()
                 arc = arc.replace("/..", "")
                 arc = arc.replace("/", "")
-                run = 'tar xzf "{path}/Restore/{arc}" -C / && rm -f "{path}/Restore/{arc}"'.format(path = GLOBAL.path, arc = arc)
-
+                run = 'systemctl stop emercoin && systemctl stop ness && systemctl stop explorer && '
+                run += 'tar xzf "{path}/Restore/{arc}" -C / && rm -f "{path}/Restore/{arc}"'.format(path = GLOBAL.path, arc = arc)
+                run += '&& systemctl start emercoin && systemctl start ness && systemctl start explorer'
             if run != False:
                 commands[command]["log"] = subprocess.getoutput(run)
                 commands[command]["date"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
