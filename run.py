@@ -210,8 +210,6 @@ def run_commands():
 
             if command == "sysupgrade":
                 run = "apt update && apt -y upgrade"
-
-                print("\nWait for Service Controller upgrade ...")
             elif command == "cert":
                 run = 'openssl req -x509 -newkey rsa:4096 -sha512 -keyout key.pem -out cert.pem -days 3650 -noenc -subj "/C=VD/ST=VOID/L=VOID/O=VOID/OU=VOID/CN=VOID" && cp cert.pem /usr/local/share/ca-certificates/cert.pem && cp key.pem /usr/local/share/ca-certificates/key.pem && systemctl restart apache2'
                 # run = 'ls -lh /home/privateness'
@@ -262,7 +260,9 @@ def run_commands():
     write_commands(commands)
 
     if command == "sysupgrade":
+        print("\nWait for Service Controller upgrade ...")
         begin_self_upgrade()
+        exit(0)
 
 
 while True:
